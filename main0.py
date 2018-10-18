@@ -31,7 +31,7 @@ def getpret():
     html_doc = r1.text
     soup = BeautifulSoup(html_doc)
     print(soup.find(itemprop="author").text)
-    print(soup.find(itemprop="datePublished"))
+    print(soup.find(itemprop="datePublished")["content"]) # .parent.text
     print(soup.find(itemprop = "numberOfPages").text)
     # f1 = open('r1.html', 'w')
     # f1.write(html_doc)
@@ -39,11 +39,17 @@ def getpret():
 getpret()
 
 """
-('meta', {'itemprop'})
+    print(soup.find(itemprop="author").text)
+    print(soup.find(itemprop="datePublished").parent.text) # .parent.text
+    print(soup.find(itemprop = "numberOfPages").text)
+    
+何故か出力結果が
+François Chollet、J. J. Allaire　著、瀬戸山 雅人　監訳、長尾 高弘　訳
 
-https://qiita.com/hideshis/items/1f556847784434cd815e
-import webbrowser
-url = row[2]
-browser = webbrowser.get('"(chrome.exe までの絶対パス)" %s')
-browser.open(url)
+2018年10月 発行
+                
+400
+    
+
+
 """
