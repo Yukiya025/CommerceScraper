@@ -6,50 +6,32 @@ import webbrowser
 import warnings
 warnings.filterwarnings('ignore')
 
-def geturl():
-    with open('Oreilly.csv', 'r') as csv_file:
-        reader = csv.reader(csv_file)
-        for row in reader:
-            print(row[2])
-            r0 = requests.get(row[2])
-            r0.encoding = r0.apparent_encoding
-
-# geturl()
-
 def openff():
     # This def open firefox browser.
     url = "https://www.oreilly.co.jp/books/9784873118574/"
     browser = webbrowser.get('"/usr/bin/firefox" %s')
     browser.open(url)
 
-# openff()
-
 def getpret():
-    r1 = requests.get("https://www.oreilly.co.jp/books/9784873118574/")
-    r1.encoding = r1.apparent_encoding
+    csv_oreilly = pd.read_csv('Oreilly.csv', sep=",")
 
-    html_doc = r1.text
-    soup = BeautifulSoup(html_doc)
-    print(soup.find(itemprop="author").text)
-    print(soup.find(itemprop="datePublished")["content"]) # .parent.text
-    print(soup.find(itemprop = "numberOfPages").text)
-    # f1 = open('r1.html', 'w')
-    # f1.write(html_doc)
+    with open('bk_info.csv', 'w') as file:
+        writer = csv.writer(file, lineterminator='\n')
+        writer.writerow(["Auth", "Date", "Pages"])
 
-getpret()
+        for index, row in csv_oreilly.iterrows():
+            r1 = csv_oreilly['Link'][index]
+            r1 = requests.get(r1)
+            r1.encoding = r1.apparent_encoding
 
-"""
-    print(soup.find(itemprop="author").text)
-    print(soup.find(itemprop="datePublished").parent.text) # .parent.text
-    print(soup.find(itemprop = "numberOfPages").text)
-    
-何故か出力結果が
-François Chollet、J. J. Allaire　著、瀬戸山 雅人　監訳、長尾 高弘　訳
+            html_doc = r1.text
+            soup = BeautifulSoup(html_doc)
+            auth = soup.find(itemprop="author").text
+            date = soup.find(itemprop="datePublished")["content"] # .parent.text
+            pages = soup.find(itemprop = "numberOfPages").text
+            writer.writerow([auth, date, pages])
 
-2018年10月 発行
-                
-400
-    
-
-
-"""
+def add_info():
+    info1 = pd.read_csv('bk_info.csv')
+    title_csv = pd.read_csv('Oreilly.csv')
+    title_csv.join(info1).to_csv('out.csv', index=False)
